@@ -72,7 +72,7 @@ def tokenize_data(run_name: str, paths: list[Path], out_root: Path,
     # call preprocess_instruct_data.py from Megatron-LLM, make sure to specify the path to your Megatron-LLM directory
     cmd = ["python", "Megatron-LLM/tools/preprocess_instruct_data.py", "--input"] + paths
     cmd += [f"--output_prefix={out_prefix}", "--tokenizer_type=SentencePieceTokenizer",
-            "--vocab_file=/mnt/sharded/models/meditron-7b/checkpoints/llama2-7b-tp1-pp1/tokenizer.model", "--chunk_size=32",
+            "--vocab_file=/mnt/models/meditron-7b/checkpoints/llama2-7b-tp1-pp1/tokenizer.model", "--chunk_size=32",
             "--workers=32", "--vocab_extra_ids_list", extra_vocabs,
             f"--question_key={qkey}", f"--answer_key={akey}"]
     if skey is not None:
