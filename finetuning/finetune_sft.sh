@@ -120,7 +120,7 @@ if [[ $MODEL = falcon ]]; then
 	fi
 elif [[ $MODEL = llama ]] || [[ $MODEL = llama2 ]] || [[ $MODEL = codellama ]]; then
 	EXTRA_IDS="[bib_ref],[/bib_ref],[fig_ref],[/fig_ref],[bib],[/bib],[fig],[/fig],[table],[/table],[formula],[/formula]"
-	EXTRA_ARGS="--vocab_file=/pure-mlo-scratch/llama/tokenizer.model --use_rms_norm
+	EXTRA_ARGS="--vocab_file=/mnt/models/meditron-7b/checkpoints/llama2-7b-tp4-pp1/tokenizer.model --use_rms_norm
 	            --glu_activation swiglu --no_tie_embed_logits"
 	if [[ $INSTRUCT = 1 ]]; then
 		if [[ $DATA_PATH = none ]]; then
@@ -138,13 +138,13 @@ elif [[ $MODEL = llama ]] || [[ $MODEL = llama2 ]] || [[ $MODEL = codellama ]]; 
 		if [[ $SEQ_LEN = none ]]; then
 			SEQ_LEN=2048
 		fi
-		EXTRA_ARGS="$EXTRA_ARGS --vocab_file=/pure-mlo-scratch/llama2/Llama-2-7b-hf/tokenizer.model"
+		EXTRA_ARGS="$EXTRA_ARGS --vocab_file=/mnt/models/meditron-7b/checkpoints/llama2-7b-tp4-pp1/tokenizer.model"
 		EXTRA_ARGS="$EXTRA_ARGS --layernorm_epsilon 1e-6"
 	elif [[ $MODEL == llama2 ]]; then
 		if [[ $SEQ_LEN = none ]]; then
 			SEQ_LEN=4096
 		fi
-		EXTRA_ARGS="$EXTRA_ARGS --vocab_file=/pure-mlo-scratch/llama2/Llama-2-7b-hf/tokenizer.model"
+		EXTRA_ARGS="$EXTRA_ARGS --vocab_file=/mnt/models/meditron-7b/checkpoints/llama2-7b-tp4-pp1/tokenizer.model"
 		EXTRA_ARGS="$EXTRA_ARGS --layernorm_epsilon 1e-5"
 		if (( $SIZE > 13 )); then  # llama 2, 34B and 70B
 			LR="1.5e-4"
@@ -154,7 +154,7 @@ elif [[ $MODEL = llama ]] || [[ $MODEL = llama2 ]] || [[ $MODEL = codellama ]]; 
 		if [[ $SEQ_LEN = none ]]; then
 			SEQ_LEN=16384
 		fi
-		EXTRA_ARGS="$EXTRA_ARGS --vocab_file=/pure-mlo-scratch/codellama/CodeLlama-7b/tokenizer.model --rope_theta 1e6"
+		EXTRA_ARGS="$EXTRA_ARGS --vocab_file=/mnt/models/meditron-7b/checkpoints/llama2-7b-tp4-pp1/tokenizer.model --rope_theta 1e6"
 	fi
 elif [[ $MODEL = gpt ]]; then
 	if [[ $DATA_PATH = none ]]; then

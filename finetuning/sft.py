@@ -9,11 +9,7 @@ from argparse import ArgumentParser, Namespace
 
 
 CHECKPOINTS = {
-    ("pmc", 7): "/pure-mlo-scratch/alhernan/megatron-data/checkpoints/llamaPMC-7b-tp4-pp1",
-    ("baseline", 7): "/pure-mlo-scratch/alhernan/megatron-data/checkpoints/llama2-7b-tp4-pp1",
-    ("baseline", 70): "/pure-mlo-scratch/alhernan/megatron-data/checkpoints/llama2-70b-tp8-pp8",
-    ("meditron", 7): "/pure-mlo-scratch/trial-runs/meditron-7b/checkpoints/llama2-7b-tp4-pp1",
-    ("meditron", 70): "/pure-mlo-scratch/trial-runs/meditron-70b/checkpoints/llama2-70b-tp8-pp8"
+    ("meditron", 7): "/mnt/models/meditron-7b/checkpoints/llama2-7b-tp1-pp1"
 }
 
 N_DOCS = {
@@ -76,7 +72,7 @@ def tokenize_data(run_name: str, paths: list[Path], out_root: Path,
     # call preprocess_instruct_data.py from Megatron-LLM, make sure to specify the path to your Megatron-LLM directory
     cmd = ["python", "Megatron-LLM/tools/preprocess_instruct_data.py", "--input"] + paths
     cmd += [f"--output_prefix={out_prefix}", "--tokenizer_type=SentencePieceTokenizer",
-            "--vocab_file=/pure-mlo-scratch/llama/tokenizer.model", "--chunk_size=32",
+            "--vocab_file=/mnt/models/meditron-7b/checkpoints/llama2-7b-tp4-pp1/tokenizer.model", "--chunk_size=32",
             "--workers=32", "--vocab_extra_ids_list", extra_vocabs,
             f"--question_key={qkey}", f"--answer_key={akey}"]
     if skey is not None:
@@ -125,7 +121,7 @@ def finetune(args: Namespace, data_path: Path, val_path: Path, out: Path):
              wandb_id]
     model_name = "llama" if args.checkpoint == "pmc" else "llama2"
 
-    cmd = ["bash", "./finetune_sft.sh", model_name, "--instruct", "--micro-batch",
+    cmd = ["bash", "./finetuning/finetune_sft.sh", model_name, "--instruct", "--micro-batch",
            args.micro_batch, "--global-batch", "64", "--tp", tp, "--pp", pp, "--seq-len",
            args.seq, "--checkpoint", load_from, "--data", data_path,
            "--out", out, "--loss-mask", args.loss_mask, "--save-interval", args.save_interval]

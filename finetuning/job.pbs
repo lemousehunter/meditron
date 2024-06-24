@@ -1,0 +1,14 @@
+#!/bin/bash
+
+#PBS -N MedAlignFT_Run1
+#PBS -l select=1:ngpus=16
+#PBS -l walltime=48:00:00
+#PBS -q ai
+#PBS -P 50090337
+#PBS -N container
+## enter the work
+cd $PBS_O_WORKDIR
+## setup Environment
+module load singularity
+singularity exec --nv --bind=/scratch/users/industry/hpcic/hpcic38/sif_data:/mnt --env=SINGULARITYENV_WANDB_USERNAME=lemousehunter SINGULARITYENV_WANDB_API_KEY=e477300328a087922cf91e239f8fb7559beec8d9 library://lemousehunter/collections/meditron-env:latest-amd64 python /home/users/industry/hpcic/hpcic38/meditron/finetuning/sft.py --checkpoint=meditron --size=7 --run_name=medAlign1 --save_checkpoint_dir=/mnt/trained_models/ --tokenized_data_dir=/mnt/tokenized_data --data=/mnt/data/finetune_1/train/train.jsonl --val=/mnt/data/finetune_1/val/val.jsonl --epochs=5 --question_key="input" --answer_key="output" --system_key="system", --seq=4096 --save_inteval=10000 --micro_batch_size=128 --id= medAlign1_run1
+
