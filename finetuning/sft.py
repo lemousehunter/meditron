@@ -9,7 +9,7 @@ from argparse import ArgumentParser, Namespace
 
 
 CHECKPOINTS = {
-    ("meditron", 7): "/mnt/sharded/models/meditron-7b/checkpoints/llama2-7b-tp1-pp1"
+    ("meditron", 7): "/mnt/sharded/models/meditron-7b/checkpoints/llama2-7b-tp4-pp4"
 }
 
 N_DOCS = {
@@ -72,7 +72,7 @@ def tokenize_data(run_name: str, paths: list[Path], out_root: Path,
     # call preprocess_instruct_data.py from Megatron-LLM, make sure to specify the path to your Megatron-LLM directory
     cmd = ["python", "Megatron-LLM/tools/preprocess_instruct_data.py", "--input"] + paths
     cmd += [f"--output_prefix={out_prefix}", "--tokenizer_type=SentencePieceTokenizer",
-            "--vocab_file=/mnt/models/meditron-7b/checkpoints/llama2-7b-tp1-pp1/tokenizer.model", "--chunk_size=32",
+            f"--vocab_file=/mnt/models/meditron-7b/checkpoints/llama2-7b-tp{args.tp}-pp{args.pp}/tokenizer.model", f"--chunk_size={args.dataset_chunksize}",
             "--workers=32", "--vocab_extra_ids_list", extra_vocabs,
             f"--question_key={qkey}", f"--answer_key={akey}"]
     if skey is not None:
@@ -122,9 +122,9 @@ def finetune(args: Namespace, data_path: Path, val_path: Path, out: Path):
     model_name = "llama" if args.checkpoint == "pmc" else "llama2"
 
     cmd = ["bash", "./finetuning/finetune_sft.sh", model_name, "--instruct", "--micro-batch",
-           args.micro_batch, "--global-batch", "32", "--tp", tp, "--pp", pp, "--seq-len",
+           args.micro_batch, "--global-batch", "64", "--tp", tp, "--pp", pp, "--seq-len",
            args.seq, "--checkpoint", load_from, "--data", data_path,
-           "--out", out, "--loss-mask", args.loss_mask, "--save-interval", args.save_interval, "--gpus", 1]
+           "--out", out, "--loss-mask", args.loss_mask, "--save-interval", args.save_interval, "--gpus", args.gpus]
     if args.intermediate_iter is not None:
         cmd += ["--it", args.intermediate_iter]
     if val_path is not None:
@@ -238,13 +238,13 @@ if __name__ == "__main__":
     parser.add_argument("--intermediate_iter", type=int,
                         help=("Specify the iteration of the checkpoint to train, "
                               "instead of using the latest available checkpoint"))
-    parser.add_argument("--question_key", default="prompt", dest="qkey",
+    parser.add_argument("--question_key", default="input", dest="qkey",
                         help="Specify question key in the json")
-    parser.add_argument("--answer_key", default="gold", dest="akey",
+    parser.add_argument("--answer_key", default="output", dest="akey",
                         help="Specify answer key in the json")
-    parser.add_argument("--system_key", dest="skey",
+    parser.add_argument("--system_key", default="system", dest="skey",
                         help="Specify system key in the json")
-    parser.add_argument("--micro_batch", type=int, default=32,
+    parser.add_argument("--micro_batch", type=int, default=10,
                         help="Micro batch size")
     parser.add_argument("--epochs", type=int, default=DEFAULT_EPOCHS,
                         help="Epochs to train for")
@@ -258,5 +258,7 @@ if __name__ == "__main__":
     parser.add_argument("--id", help="Unique ID to append to the run name")
     parser.add_argument("--tp", type=int, help="Force tp to use")
     parser.add_argument("--pp", type=int, help="Force pp to use")
+    parser.add_argument("--gpus", type="int", help="Number of gpus to use", default=4)
+    parser.add_argument("--dataset_chunksize", type=int, default=32)
     args = parser.parse_args()
     main(args)
