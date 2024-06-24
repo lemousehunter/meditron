@@ -124,7 +124,7 @@ def finetune(args: Namespace, data_path: Path, val_path: Path, out: Path):
     cmd = ["bash", "./finetuning/finetune_sft.sh", model_name, "--instruct", "--micro-batch",
            args.micro_batch, "--global-batch", "64", "--tp", tp, "--pp", pp, "--seq-len",
            args.seq, "--checkpoint", load_from, "--data", data_path,
-           "--out", out, "--loss-mask", args.loss_mask, "--save-interval", args.save_interval]
+           "--out", out, "--loss-mask", args.loss_mask, "--save-interval", args.save_interval, "--gpus", 1]
     if args.intermediate_iter is not None:
         cmd += ["--it", args.intermediate_iter]
     if val_path is not None:
