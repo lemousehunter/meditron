@@ -118,7 +118,7 @@ def finetune(args: Namespace, data_path: Path, val_path: Path, out: Path):
     tp, pp = get_parallel_levels(out)
     wandb_id = out.name.replace(f"-tp{tp}-pp{pp}", "").replace("llama-2", "llama2")
     wandb = ["--wandb", "--wandb-project", "medalign-finetuning", "--wandb-id",
-             wandb_id]
+             wandb_id, "--wandb-entity", "lemousehunter"]
     model_name = "llama" if args.checkpoint == "pmc" else "llama2"
 
     cmd = ["bash", "./finetuning/finetune_sft.sh", model_name, "--instruct", "--micro-batch",
