@@ -3,8 +3,9 @@
 
 # default arguments
 SIZE=7
-TP=8
+TP=1
 PP=1
+DP=4
 GPUS_PER_NODE=8
 MICRO_BATCH=1
 GLOBAL_BATCH=12
@@ -33,7 +34,7 @@ HELP_STR="[--rank=$RANK] [--size=$SIZE] [--tp=$TP] [--pp=$PP] [--gpus=$GPUS_PER_
 [--micro-batch=$MICRO_BATCH] [--global-batch=$GLOBAL_BATCH] [--nodes=$N_NODES] \
 [--addr=$ADDR] [--wandb] [--instruct] [--checkpoint=...] [--data=...] [--iters=$ITERS] \
 [--wandb-proj=none] [--wandb-id=none] [--wandb-entity=none] [--seq-len=...] \
-[--val-path=none] [--out=...] [--lr=lr minlr] [--loss-mask=$LOSS_MASK]
+[--val-path=none] [--out=...] [--lr=lr minlr] [--loss-mask=$LOSS_MASK] [--dataset_parallel_size=$DP]
 [--save-interval=$SAVE_INTERVAL] [--converted_model_dir=$CONVERTED_MODEL_DIR] [--it=$IT] [--help]"
 
 # define help function
@@ -81,6 +82,7 @@ while [[ $# -gt 0 ]]; do
 		--loss-mask) LOSS_MASK=$2; shift; shift;;
 		--save-interval) SAVE_INTERVAL=$2; shift; shift;;
     --converted_model_dir) CONVERTED_MODEL_DIR=$2; shift; shift;;
+    --dataset_parallel_size) DP=$2; shift; shift;;
     --it) IT=$2; shift; shift;;
 		*) echo unknown argument $1; help; exit 1;;
 	esac
@@ -252,5 +254,6 @@ CUDA_DEVICE_MAX_CONNECTIONS=1 OMP_NUM_THREADS=16 torchrun $DISTRIBUTED_ARGS Mega
        --global_batch_size $GLOBAL_BATCH \
        --micro_batch_size $MICRO_BATCH \
        --num_workers=2 \
+       --dataset_parallel_size $DP \
        $EXTRA_ARGS \
        $COMMON_ARGS
