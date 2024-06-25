@@ -142,7 +142,7 @@ def finetune(args: Namespace, data_path: Path, val_path: Path, out: Path):
             assert args.nodes == 1, "n docs infer only supported when nodes=1"
             cmd = list(map(str, cmd))
             n_docs = infer_ndocs(cmd, autoaccept_iters=args.autoaccept_iters)
-        n_iters = args.epochs*n_docs/GLOBAL_BATCH_SIZE
+        n_iters = args.epochs*n_docs/args.global_batch_size
         n_iters = 10*int(math.ceil(n_iters/10))  # to make it a multiple of 10 xd
         cmd += ["--iters", n_iters]
 
