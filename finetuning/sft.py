@@ -9,7 +9,7 @@ from argparse import ArgumentParser, Namespace
 
 
 CHECKPOINTS = {
-    ("meditron", 7): "/mnt/sharded/models/meditron-7b/checkpoints/llama2-7b-tp1-pp1"
+    ("meditron", 7): "/mnt/sharded/models/meditron-7b/checkpoints/llama2-7b-tp4-pp1"
 }
 
 N_DOCS = {
