@@ -254,6 +254,6 @@ CUDA_DEVICE_MAX_CONNECTIONS=1 OMP_NUM_THREADS=16 torchrun $DISTRIBUTED_ARGS Mega
        --global_batch_size $GLOBAL_BATCH \
        --micro_batch_size $MICRO_BATCH \
        --num_workers=2 \
-       --dataset_parallel_size $DP \
+       --data_parallel_size $DP \
        $EXTRA_ARGS \
        $COMMON_ARGS
