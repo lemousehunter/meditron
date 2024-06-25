@@ -28,13 +28,13 @@ USR_MIN_LR=none
 LOSS_MASK=0.0
 SAVE_INTERVAL=800
 IT=none
+CONVERTED_MODEL_DIR=none
 HELP_STR="[--rank=$RANK] [--size=$SIZE] [--tp=$TP] [--pp=$PP] [--gpus=$GPUS_PER_NODE] \
 [--micro-batch=$MICRO_BATCH] [--global-batch=$GLOBAL_BATCH] [--nodes=$N_NODES] \
 [--addr=$ADDR] [--wandb] [--instruct] [--checkpoint=...] [--data=...] [--iters=$ITERS] \
 [--wandb-proj=none] [--wandb-id=none] [--wandb-entity=none] [--seq-len=...] \
 [--val-path=none] [--out=...] [--lr=lr minlr] [--loss-mask=$LOSS_MASK]
-[--save-interval=$SAVE_INTERVAL] [--it=$IT] [--help]"
-
+[--save-interval=$SAVE_INTERVAL] [--converted_model_dir=$CONVERTED_MODEL_DIR] [--it=$IT] [--help]"
 
 # define help function
 help () {
@@ -80,7 +80,8 @@ while [[ $# -gt 0 ]]; do
 		--lr) USR_LR=$2; USR_MIN_LR=$3; shift; shift; shift;;
 		--loss-mask) LOSS_MASK=$2; shift; shift;;
 		--save-interval) SAVE_INTERVAL=$2; shift; shift;;
-		--it) IT=$2; shift; shift;;
+    --converted_model_dir) CONVERTED_MODEL_DIR=$2; shift; shift;;
+    --it) IT=$2; shift; shift;;
 		*) echo unknown argument $1; help; exit 1;;
 	esac
 done
@@ -120,7 +121,7 @@ if [[ $MODEL = falcon ]]; then
 	fi
 elif [[ $MODEL = llama ]] || [[ $MODEL = llama2 ]] || [[ $MODEL = codellama ]]; then
 	EXTRA_IDS="[bib_ref],[/bib_ref],[fig_ref],[/fig_ref],[bib],[/bib],[fig],[/fig],[table],[/table],[formula],[/formula]"
-	EXTRA_ARGS="--vocab_file=/mnt/models/meditron-7b/checkpoints/llama2-7b-tp1-pp1/tokenizer.model --use_rms_norm
+	EXTRA_ARGS="--vocab_file=${converted_model_dir}/tokenizer.model --use_rms_norm
 	            --glu_activation swiglu --no_tie_embed_logits"
 	if [[ $INSTRUCT = 1 ]]; then
 		if [[ $DATA_PATH = none ]]; then
@@ -138,13 +139,13 @@ elif [[ $MODEL = llama ]] || [[ $MODEL = llama2 ]] || [[ $MODEL = codellama ]]; 
 		if [[ $SEQ_LEN = none ]]; then
 			SEQ_LEN=2048
 		fi
-		EXTRA_ARGS="$EXTRA_ARGS --vocab_file=/mnt/models/meditron-7b/checkpoints/llama2-7b-tp1-pp1/tokenizer.model"
+		EXTRA_ARGS="$EXTRA_ARGS --vocab_file=${converted_model_dir}/tokenizer.model"
 		EXTRA_ARGS="$EXTRA_ARGS --layernorm_epsilon 1e-6"
 	elif [[ $MODEL == llama2 ]]; then
 		if [[ $SEQ_LEN = none ]]; then
 			SEQ_LEN=4096
 		fi
-		EXTRA_ARGS="$EXTRA_ARGS --vocab_file=/mnt/models/meditron-7b/checkpoints/llama2-7b-tp1-pp1/tokenizer.model"
+		EXTRA_ARGS="$EXTRA_ARGS --vocab_file=${converted_model_dir}/tokenizer.model"
 		EXTRA_ARGS="$EXTRA_ARGS --layernorm_epsilon 1e-5"
 		if (( $SIZE > 13 )); then  # llama 2, 34B and 70B
 			LR="1.5e-4"
@@ -154,7 +155,7 @@ elif [[ $MODEL = llama ]] || [[ $MODEL = llama2 ]] || [[ $MODEL = codellama ]]; 
 		if [[ $SEQ_LEN = none ]]; then
 			SEQ_LEN=16384
 		fi
-		EXTRA_ARGS="$EXTRA_ARGS --vocab_file=/mnt/models/meditron-7b/checkpoints/llama2-7b-tp1-pp1/tokenizer.model --rope_theta 1e6"
+		EXTRA_ARGS="$EXTRA_ARGS --vocab_file=${converted_model_dir}/tokenizer.model --rope_theta 1e6"
 	fi
 elif [[ $MODEL = gpt ]]; then
 	if [[ $DATA_PATH = none ]]; then
