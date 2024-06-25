@@ -121,7 +121,7 @@ if [[ $MODEL = falcon ]]; then
 	fi
 elif [[ $MODEL = llama ]] || [[ $MODEL = llama2 ]] || [[ $MODEL = codellama ]]; then
 	EXTRA_IDS="[bib_ref],[/bib_ref],[fig_ref],[/fig_ref],[bib],[/bib],[fig],[/fig],[table],[/table],[formula],[/formula]"
-	EXTRA_ARGS="--vocab_file=${converted_model_dir}/tokenizer.model --use_rms_norm
+	EXTRA_ARGS="--vocab_file=${CONVERTED_MODEL_DIR}/tokenizer.model --use_rms_norm
 	            --glu_activation swiglu --no_tie_embed_logits"
 	if [[ $INSTRUCT = 1 ]]; then
 		if [[ $DATA_PATH = none ]]; then
