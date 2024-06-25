@@ -139,13 +139,13 @@ elif [[ $MODEL = llama ]] || [[ $MODEL = llama2 ]] || [[ $MODEL = codellama ]]; 
 		if [[ $SEQ_LEN = none ]]; then
 			SEQ_LEN=2048
 		fi
-		EXTRA_ARGS="$EXTRA_ARGS --vocab_file=${converted_model_dir}/tokenizer.model"
+		EXTRA_ARGS="$EXTRA_ARGS --vocab_file=${CONVERTED_MODEL_DIR}/tokenizer.model"
 		EXTRA_ARGS="$EXTRA_ARGS --layernorm_epsilon 1e-6"
 	elif [[ $MODEL == llama2 ]]; then
 		if [[ $SEQ_LEN = none ]]; then
 			SEQ_LEN=4096
 		fi
-		EXTRA_ARGS="$EXTRA_ARGS --vocab_file=${converted_model_dir}/tokenizer.model"
+		EXTRA_ARGS="$EXTRA_ARGS --vocab_file=${CONVERTED_MODEL_DIR}/tokenizer.model"
 		EXTRA_ARGS="$EXTRA_ARGS --layernorm_epsilon 1e-5"
 		if (( $SIZE > 13 )); then  # llama 2, 34B and 70B
 			LR="1.5e-4"
@@ -155,7 +155,7 @@ elif [[ $MODEL = llama ]] || [[ $MODEL = llama2 ]] || [[ $MODEL = codellama ]]; 
 		if [[ $SEQ_LEN = none ]]; then
 			SEQ_LEN=16384
 		fi
-		EXTRA_ARGS="$EXTRA_ARGS --vocab_file=${converted_model_dir}/tokenizer.model --rope_theta 1e6"
+		EXTRA_ARGS="$EXTRA_ARGS --vocab_file=${CONVERTED_MODEL_DIR}/tokenizer.model --rope_theta 1e6"
 	fi
 elif [[ $MODEL = gpt ]]; then
 	if [[ $DATA_PATH = none ]]; then
