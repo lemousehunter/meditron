@@ -82,7 +82,7 @@ while [[ $# -gt 0 ]]; do
 		--loss-mask) LOSS_MASK=$2; shift; shift;;
 		--save-interval) SAVE_INTERVAL=$2; shift; shift;;
     --converted_model_dir) CONVERTED_MODEL_DIR=$2; shift; shift;;
-    --dataset_parallel_size) DP=$2; shift; shift;;
+    --data_parallel_size) DP=$2; shift; shift;;
     --it) IT=$2; shift; shift;;
 		*) echo unknown argument $1; help; exit 1;;
 	esac
