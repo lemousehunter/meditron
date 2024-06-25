@@ -12,6 +12,8 @@ CHECKPOINTS = {
     ("meditron", 7): "/mnt/sharded/models/meditron-7b/checkpoints/llama2-7b-tp4-pp1"
 }
 
+GLOBAL_BATCH_SIZE = 32
+
 N_DOCS = {
     "medmcqa": 159669,
     "cotmedmcqa": 182822,
@@ -122,7 +124,7 @@ def finetune(args: Namespace, data_path: Path, val_path: Path, out: Path):
     model_name = "llama" if args.checkpoint == "pmc" else "llama2"
 
     cmd = ["bash", "./finetuning/finetune_sft.sh", model_name, "--instruct", "--micro-batch",
-           args.micro_batch, "--global-batch", "32", "--tp", tp, "--pp", pp, "--gpus", args.gpus,
+           args.micro_batch, "--global-batch", GLOBAL_BATCH_SIZE, "--tp", tp, "--pp", pp, "--gpus", args.gpus,
            "--seq-len", args.seq, "--checkpoint", load_from, "--data", data_path,
            "--out", out, "--loss-mask", args.loss_mask, "--save-interval", args.save_interval,
            "--converted_model_dir", args.converted_weights_dir]
@@ -141,7 +143,7 @@ def finetune(args: Namespace, data_path: Path, val_path: Path, out: Path):
             assert args.nodes == 1, "n docs infer only supported when nodes=1"
             cmd = list(map(str, cmd))
             n_docs = infer_ndocs(cmd, autoaccept_iters=args.autoaccept_iters)
-        n_iters = args.epochs*n_docs/64
+        n_iters = args.epochs*n_docs/GLOBAL_BATCH_SIZE
         n_iters = 10*int(math.ceil(n_iters/10))  # to make it a multiple of 10 xd
         cmd += ["--iters", n_iters]
 
